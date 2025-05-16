@@ -16,9 +16,31 @@ def get_book_links(book_id):
     }
 
 
+def get_book_or_404(book_id):
+    book = Book.query.get(book_id)
+    if not book:
+        response = {
+            "error": f"Book with id {book_id} not found",
+            "_links": {
+                "list": {"href": url_for('library.get_books')}
+            }
+        }
+        return None, (jsonify(response), 404)
+    return book, None
+
+
 @library.route("/")
 def index():
-    return jsonify({"message": "Main page of API, hi!"})
+    return jsonify({
+        "message": "Main page of API, hi!",
+        "_links": {
+            "self": {"href": url_for('library.index')},
+            "get_books": {"href": url_for('library.get_books')},
+            "create_book": {"href": url_for('library.create_book')},
+            "get_book": {"href": url_for('library.get_book', book_id=9)},
+            "delete_book": {"href": url_for('library.delete_book', book_id=9)},
+        }
+    })
 
 
 @library.route('/books', methods=['POST'])
@@ -73,7 +95,10 @@ def get_books():
 
 @library.route("/books/<int:book_id>", methods=["GET"])
 def get_book(book_id):
-    book = db.get_or_404(Book, book_id)
+    book, error_response = get_book_or_404(book_id)
+    if error_response:
+        return error_response
+
     book_data = book_schema.dump(book)
     book_data['_links'] = get_book_links(book_id)
     return jsonify(book_data), 200
@@ -81,7 +106,10 @@ def get_book(book_id):
 
 @library.route("/books/<int:book_id>", methods=["DELETE"])
 def delete_book(book_id):
-    book = db.get_or_404(Book, book_id)
+    book, error_response = get_book_or_404(book_id)
+    if error_response:
+        return error_response
+
     db.session.delete(book)
     db.session.commit()
     return {}, 204
