@@ -8,22 +8,23 @@ services:
     ports:
       - "5050:5050"
     environment:
-      - SQLALCHEMY_DATABASE_URI=postgresql://admin:PassWord@db:5432/books11
+      - SQLALCHEMY_DATABASE_URI=mysql://admin:PassWord@db:3306/books11
     depends_on:
       - db
 
   db:
-    image: postgres:14
+    image: mysql:8.0
     container_name: lab11_db
     restart: always
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - "3306:3306"
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=PassWord
-      - POSTGRES_DB=books11
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: books11
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: PassWord
+    volumes:
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  postgres_data:
+  mysql_data:

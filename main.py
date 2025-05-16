@@ -3,10 +3,9 @@ from flask import Flask
 from models import db
 from views import library
 
-
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://admin:PassWord@localhost:5432/books11"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:PassWord@db:3306/books11"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
