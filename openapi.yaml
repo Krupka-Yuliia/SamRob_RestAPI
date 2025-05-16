@@ -1,0 +1,174 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  version: 1.0.0
+  description: API for managing a library
+
+servers:
+  - url: http://localhost:5000/
+    description: Local development server
+
+paths:
+  /books:
+    get:
+      summary: Get list of books
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of books to return
+          required: false
+          schema:
+            type: integer
+            default: 2
+            minimum: 1
+        - name: cursor
+          in: query
+          description: Cursor for pagination (book id)
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_books:
+                    type: integer
+                    example: 100
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  next_cursor:
+                    type: integer
+                    nullable: true
+                    description: The ID to be used as cursor for next page
+                    example: 45
+
+    post:
+      summary: Create a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+      responses:
+        '201':
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                errors:
+                  title:
+                    - "Missing data for required field."
+                  year:
+                    - "Must be between 1500 and 2025."
+
+  /books/{book_id}:
+    get:
+      summary: Get a book by ID
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+
+    delete:
+      summary: Delete a book by ID
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Book deleted successfully
+        '404':
+          description: Book not found
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          readOnly: true
+        title:
+          type: string
+          example: "To Kill a Mockingbird"
+        author:
+          type: string
+          example: "Harper Lee"
+        publisher:
+          type: string
+          example: "J.B. Lippincott & Co."
+        year:
+          type: integer
+          example: 1960
+      required:
+        - id
+        - title
+        - author
+        - publisher
+        - year
+
+    BookInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "To Kill a Mockingbird"
+          minLength: 1
+          maxLength: 100
+        author:
+          type: string
+          example: "Harper Lee"
+          minLength: 1
+          maxLength: 100
+        publisher:
+          type: string
+          example: "J.B. Lippincott & Co."
+          minLength: 1
+          maxLength: 100
+        year:
+          type: integer
+          minimum: 1500
+          maximum: 2025
+          example: 1960
+      required:
+        - title
+        - author
+        - publisher
+        - year
