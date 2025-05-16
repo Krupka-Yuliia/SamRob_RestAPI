@@ -1,11 +1,19 @@
+import os
+
 from flask import Flask
 
 from models import db
 from views import library
 
+
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:PassWord@db:3306/books11"
+    if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+        print("hello " + os.environ['PYTHONANYWHERE_DOMAIN'])
+        app.config[
+            'SQLALCHEMY_DATABASE_URI'] = "mysql://yuliiakrupka:xybgyn-Wokveb-kytde5@yuliiakrupka.mysql.pythonanywhere-services.com/yuliiakrupka$default"
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://admin:PassWord@db:3306/books11"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
