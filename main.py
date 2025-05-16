@@ -5,7 +5,7 @@ from views import library
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://yuliiakrupka:xybgyn-Wokveb-kytde5@yuliiakrupka.mysql.pythonanywhere-services.com/yuliiakrupka$default"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:PassWord@db:3306/books11"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
