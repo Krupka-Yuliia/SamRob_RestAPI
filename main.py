@@ -8,11 +8,8 @@ from views import library
 
 def create_app():
     app = Flask(__name__)
-    for key, value in os.environ.items():
-        print(f"{key}={value}")
 
     if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-        print("hello " + os.environ['PYTHONANYWHERE_DOMAIN'])
         app.config[
             'SQLALCHEMY_DATABASE_URI'] = "mysql://yuliiakrupka:xybgyn-Wokveb-kytde5@yuliiakrupka.mysql.pythonanywhere-services.com/yuliiakrupka$default"
     else:
